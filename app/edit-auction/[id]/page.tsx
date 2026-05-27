@@ -237,7 +237,7 @@ export default function EditAuctionPage() {
           "Auction updated and sent for re-approval"
         );
 
-        router.push("/");
+        window.location.href = "/";
       } catch (error: any) {
         console.error(error);
 
