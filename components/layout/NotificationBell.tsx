@@ -1,25 +1,25 @@
 "use client";
 
 import {
+  Bell,
+} from "lucide-react";
+
+import {
   useEffect,
   useState,
 } from "react";
 
-import { Bell } from "lucide-react";
-
 import api from "@/lib/api";
 
-type Notification = {
+interface Notification {
   id: string;
-
-  title: string;
 
   message: string;
 
-  read: boolean;
-
   createdAt: string;
-};
+
+  read: boolean;
+}
 
 export default function NotificationBell() {
   const [
@@ -29,13 +29,14 @@ export default function NotificationBell() {
     Notification[]
   >([]);
 
-  const [open, setOpen] =
-    useState(false);
+  const [
+    open,
+    setOpen,
+  ] = useState(false);
 
-  useEffect(() => {
-    fetchNotifications();
-  }, []);
-
+  /**
+   * FETCH NOTIFICATIONS
+   */
   const fetchNotifications =
     async () => {
       try {
@@ -44,12 +45,20 @@ export default function NotificationBell() {
             "token"
           );
 
+        /**
+         * NOT LOGGED IN
+         */
+        if (!token) {
+          return;
+        }
+
         const response =
           await api.get(
             "/notifications",
             {
               headers: {
-                Authorization: `Bearer ${token}`,
+                Authorization:
+                  `Bearer ${token}`,
               },
             }
           );
@@ -58,50 +67,54 @@ export default function NotificationBell() {
           response.data
         );
       } catch (error) {
-        console.error(error);
+        console.error(
+          "Notification error:",
+          error
+        );
       }
     };
 
+  /**
+   * INITIAL LOAD
+   */
+  useEffect(() => {
+    const token =
+      localStorage.getItem(
+        "token"
+      );
+
+    /**
+     * NO TOKEN
+     */
+    if (!token) {
+      return;
+    }
+
+    fetchNotifications();
+  }, []);
+
+  /**
+   * UNREAD COUNT
+   */
   const unreadCount =
     notifications.filter(
       (n) => !n.read
     ).length;
 
-  const markAsRead =
-    async (
-      id: string
-    ) => {
-      try {
-        const token =
-          localStorage.getItem(
-            "token"
-          );
+  /**
+   * NO TOKEN
+   * HIDE COMPONENT
+   */
+  const token =
+    typeof window !==
+      "undefined" &&
+    localStorage.getItem(
+      "token"
+    );
 
-        await api.patch(
-          `/notifications/${id}/read`,
-          {},
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-
-        setNotifications(
-          (prev) =>
-            prev.map((n) =>
-              n.id === id
-                ? {
-                    ...n,
-                    read: true,
-                  }
-                : n
-            )
-        );
-      } catch (error) {
-        console.error(error);
-      }
-    };
+  if (!token) {
+    return null;
+  }
 
   return (
     <div className="relative">
@@ -110,13 +123,13 @@ export default function NotificationBell() {
         onClick={() =>
           setOpen(!open)
         }
-        className="relative w-12 h-12 rounded-2xl bg-[#0B1727] border border-white/5 flex items-center justify-center hover:border-cyan-500/30 transition"
+        className="relative h-12 w-12 rounded-2xl bg-[#0B1727] border border-white/5 flex items-center justify-center hover:border-cyan-500 transition"
       >
-        <Bell size={20} />
+        <Bell size={22} />
 
         {unreadCount >
           0 && (
-          <div className="absolute -top-1 -right-1 min-w-[22px] h-[22px] px-1 rounded-full bg-red-500 text-white text-xs flex items-center justify-center font-bold">
+          <div className="absolute -top-1 -right-1 h-5 min-w-5 px-1 rounded-full bg-red-500 text-white text-[10px] flex items-center justify-center">
             {
               unreadCount
             }
@@ -126,19 +139,19 @@ export default function NotificationBell() {
 
       {/* DROPDOWN */}
       {open && (
-        <div className="absolute right-0 mt-4 w-[380px] bg-[#0B1727] border border-white/5 rounded-3xl shadow-2xl overflow-hidden z-50">
+        <div className="absolute right-0 mt-4 w-[350px] bg-[#0B1727] border border-white/10 rounded-3xl shadow-2xl overflow-hidden z-50">
           {/* HEADER */}
           <div className="p-5 border-b border-white/5">
-            <h3 className="text-xl font-bold text-white">
+            <h2 className="text-lg font-semibold">
               Notifications
-            </h3>
+            </h2>
           </div>
 
-          {/* BODY */}
+          {/* LIST */}
           <div className="max-h-[450px] overflow-y-auto">
             {notifications.length ===
             0 ? (
-              <div className="p-8 text-center text-gray-500">
+              <div className="p-6 text-center text-gray-400">
                 No notifications
               </div>
             ) : (
@@ -150,30 +163,19 @@ export default function NotificationBell() {
                     key={
                       notification.id
                     }
-                    onClick={() =>
-                      markAsRead(
-                        notification.id
-                      )
-                    }
-                    className={`p-5 border-b border-white/5 cursor-pointer transition hover:bg-white/[0.03] ${
-                      notification.read
-                        ? ""
-                        : "bg-cyan-500/5"
+                    className={`p-5 border-b border-white/5 hover:bg-white/5 transition ${
+                      !notification.read
+                        ? "bg-cyan-500/5"
+                        : ""
                     }`}
                   >
-                    <h4 className="font-semibold text-white mb-2">
-                      {
-                        notification.title
-                      }
-                    </h4>
-
-                    <p className="text-sm text-gray-400 leading-relaxed">
+                    <p className="text-sm leading-relaxed">
                       {
                         notification.message
                       }
                     </p>
 
-                    <p className="text-xs text-gray-500 mt-3">
+                    <p className="text-xs text-gray-500 mt-2">
                       {new Date(
                         notification.createdAt
                       ).toLocaleString()}
