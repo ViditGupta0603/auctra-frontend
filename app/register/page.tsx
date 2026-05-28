@@ -118,6 +118,7 @@ export default function RegisterPage() {
 
         setLoading(true);
 
+        try{  
         const response =
           await api.post(
             "/auth/register",
@@ -136,11 +137,14 @@ export default function RegisterPage() {
               ),
             }
           );
-
+          
         alert(
           response.data
             .message
         );
+        } catch(error) {
+          console.error(error);
+        }
 
         router.push(
           "/login"
