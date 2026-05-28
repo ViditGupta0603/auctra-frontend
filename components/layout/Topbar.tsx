@@ -1,5 +1,7 @@
 "use client";
 
+import NotificationBell from "./NotificationBell";
+
 type Props = {
   search: string;
 
@@ -29,21 +31,21 @@ export default function Topbar({
   setSortBy,
 }: Props) {
   return (
-    <div className="flex flex-col xl:flex-row xl:items-center xl:justify-between gap-5 mb-10">
+    <div className="flex flex-col xl:flex-row xl:items-start xl:justify-between gap-6 mb-10">
       {/* LEFT */}
       <div>
-        <h1 className="text-5xl font-bold tracking-tight">
+        <h1 className="text-5xl font-bold tracking-tight text-white">
           Dashboard
         </h1>
 
-        <p className="text-gray-400 mt-2">
+        <p className="text-gray-400 mt-2 text-lg">
           Discover premium live
           auctions
         </p>
       </div>
 
       {/* RIGHT */}
-      <div className="flex flex-col md:flex-row gap-4">
+      <div className="flex flex-col lg:flex-row lg:items-center gap-4">
         {/* SEARCH */}
         <input
           type="text"
@@ -54,7 +56,7 @@ export default function Topbar({
               e.target.value
             )
           }
-          className="h-12 w-[260px] bg-[#0B1727] border border-white/5 rounded-2xl px-5 outline-none focus:border-cyan-500 transition"
+          className="h-12 w-[260px] bg-[#0B1727] border border-white/5 rounded-2xl px-5 outline-none focus:border-cyan-500 transition text-white placeholder:text-gray-500"
         />
 
         {/* CATEGORY */}
@@ -65,7 +67,7 @@ export default function Topbar({
               e.target.value
             )
           }
-          className="h-12 bg-[#0B1727] border border-white/5 rounded-2xl px-5 outline-none focus:border-cyan-500 transition"
+          className="h-12 min-w-[180px] bg-[#0B1727] border border-white/5 rounded-2xl px-5 outline-none focus:border-cyan-500 transition text-white"
         >
           <option value="">
             All Categories
@@ -100,7 +102,7 @@ export default function Topbar({
               e.target.value
             )
           }
-          className="h-12 bg-[#0B1727] border border-white/5 rounded-2xl px-5 outline-none focus:border-cyan-500 transition"
+          className="h-12 min-w-[170px] bg-[#0B1727] border border-white/5 rounded-2xl px-5 outline-none focus:border-cyan-500 transition text-white"
         >
           <option value="">
             Sort By
@@ -122,6 +124,9 @@ export default function Topbar({
             Oldest
           </option>
         </select>
+
+        {/* NOTIFICATION BELL */}
+        <NotificationBell />
       </div>
     </div>
   );
