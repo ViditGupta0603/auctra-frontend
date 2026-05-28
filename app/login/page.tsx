@@ -1,6 +1,7 @@
 "use client";
 
 import {
+  useEffect,
   useState,
 } from "react";
 
@@ -8,7 +9,6 @@ import Link from "next/link";
 
 import {
   useRouter,
-  useSearchParams,
 } from "next/navigation";
 
 import {
@@ -22,14 +22,6 @@ export default function LoginPage() {
   const router =
     useRouter();
 
-  const searchParams =
-    useSearchParams();
-
-  const verified =
-    searchParams.get(
-      "verified"
-    );
-
   const [loading, setLoading] =
     useState(false);
 
@@ -38,12 +30,35 @@ export default function LoginPage() {
     setShowPassword,
   ] = useState(false);
 
+  const [
+    verified,
+    setVerified,
+  ] = useState(false);
+
   const [formData, setFormData] =
     useState({
       email: "",
 
       password: "",
     });
+
+  /**
+   * CHECK VERIFIED PARAM
+   */
+  useEffect(() => {
+    const params =
+      new URLSearchParams(
+        window.location.search
+      );
+
+    if (
+      params.get(
+        "verified"
+      ) === "true"
+    ) {
+      setVerified(true);
+    }
+  }, []);
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement>
