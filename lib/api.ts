@@ -2,7 +2,7 @@ import axios from "axios";
 
 const api = axios.create({
   baseURL:
-    "https://github.com/ViditGupta0603/auctra-backend/api",
+    "https://auctra-backend-gunz.onrender.com/api",
 });
 
 /**
